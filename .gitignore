@@ -1,0 +1,4 @@
+# C Specific
+*.o
+*.out
+vgcore.*
