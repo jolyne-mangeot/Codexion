@@ -68,14 +68,20 @@ void	instantiate_program(t_parsed parsed,
 		return ;
 	instantiate_coders_info(parsed, &prog_info->coders_info);
 	prog_info->scheduler = parsed.scheduler;
+
 	containers->coders = malloc(sizeof(t_coder) * parsed.number_of_coders);
 	if (!containers->coders)
 		return ;
 	containers->dongles = malloc(sizeof(t_dongle) * parsed.number_of_coders);
 	if (!containers->dongles)
 		return ;
+	containers->t_coders = malloc(sizeof(pthread_t) * parsed.number_of_coders);
+	if (!containers->t_coders)
+		return ;
+
 	instantiate_coders(parsed, prog_info, containers);
 	if (instantiate_dongles(parsed, containers))
 		return ;
+
 	prog_info->state = RUNNING;
 }

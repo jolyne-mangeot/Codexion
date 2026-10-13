@@ -1,6 +1,7 @@
 
 SRC =		main.c	\
 			src/parsing.c src/codexion.c src/instantiations.c	\
+			src/monitor.c src/coders.c
 
 OBJ =		$(SRC:.c=.o)
 

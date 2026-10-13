@@ -64,6 +64,7 @@ typedef struct s_coder_info
 typedef struct s_program_info
 {
 	t_program_state	state;
+	pthread_cond_t	start_cond;
 	pthread_mutex_t	print_mutex;
 	struct timeval	program_start;
 	t_coder_info	coders_info;
@@ -102,8 +103,7 @@ typedef struct s_containers
 	t_coder			*coders;
 	t_dongle		*dongles;
 	pthread_t		*t_coders;
-	pthread_t		*t_dongles;
-	pthread_t		*monitor;
+	pthread_t		monitor;
 }	t_containers;
 
 t_parsed	parsing(char *argv[8]);
@@ -111,5 +111,8 @@ t_parsed	parsing(char *argv[8]);
 int			program_start(t_parsed parsed);
 void		instantiate_program(t_parsed parsed,
 				t_program_info *prog_info, t_containers *containers);
+
+void	*monitor(void *data);
+void	*coder_thread(void *data);
 
 #endif
