@@ -5,45 +5,47 @@ void	instantiate_coders(t_parsed parsed,
 			t_program_info *prog_info, t_containers *containers)
 {
 	int		index;
-	t_coder	coder;
+	t_coder	*coder;
 
 	index = 0;
 	while (index < parsed.number_of_coders)
 	{
-		coder = containers->coders[index];
-		coder.index = index + 1;
-		coder.state = WAITING;
-		coder.prog_info = prog_info;
+		coder = &containers->coders[index];
+		coder->index = index + 1;
+		coder->state = WAITING;
+		coder->prog_info = prog_info;
 		if (index == 0)
-			coder.r_dongle = &containers->dongles[parsed.number_of_coders - 1];
+			coder->r_dongle = &containers->dongles[parsed.number_of_coders - 1];
 		else
-			coder.r_dongle = &containers->dongles[index - 1];
-		coder.l_dongle = &containers->dongles[index];
-		coder.current_cooldown = 0;
+			coder->r_dongle = &containers->dongles[index - 1];
+		coder->l_dongle = &containers->dongles[index];
+		coder->current_cooldown = 0;
+		index++;
 	}
 }
 
 int	instantiate_dongles(t_parsed parsed, t_containers *containers)
 {
 	int			index;
-	t_dongle	dongle;
+	t_dongle	*dongle;
 
 	index = 0;
 	while (index < parsed.number_of_coders)
 	{
-		dongle = containers->dongles[index];
-		dongle.index = index + 1;
-		dongle.state = FREE;
-		dongle.r_coder = &containers->coders[index];
+		dongle = &containers->dongles[index];
+		dongle->index = index + 1;
+		dongle->state = FREE;
+		dongle->r_coder = &containers->coders[index];
 		if (index == parsed.number_of_coders - 1)
-			dongle.l_coder = &containers->coders[0];
+			dongle->l_coder = &containers->coders[0];
 		else
-			dongle.l_coder = &containers->coders[index + 1];
-		dongle.queue[0] = NULL;
-		dongle.queue[1] = NULL;
-		dongle.cooldown = parsed.dongle_cooldown;
-		if (pthread_mutex_init(&dongle.mutex, NULL))
+			dongle->l_coder = &containers->coders[index + 1];
+		dongle->queue[0] = NULL;
+		dongle->queue[1] = NULL;
+		dongle->cooldown = parsed.dongle_cooldown;
+		if (pthread_mutex_init(&dongle->mutex, NULL))
 			return (1);
+		index++;
 	}
 	return (0);
 }
@@ -69,7 +71,7 @@ void	instantiate_program(t_parsed parsed,
 	containers->coders = malloc(sizeof(t_coder) * parsed.number_of_coders);
 	if (!containers->coders)
 		return ;
-	containers->dongles = malloc(sizeof(t_coder) * parsed.number_of_coders);
+	containers->dongles = malloc(sizeof(t_dongle) * parsed.number_of_coders);
 	if (!containers->dongles)
 		return ;
 	instantiate_coders(parsed, prog_info, containers);

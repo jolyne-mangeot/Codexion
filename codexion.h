@@ -14,7 +14,7 @@ typedef enum e_program_state
 {
 	RUNNING,
 	SUCCESS,
-	BURNOUT,
+	PROG_BURNOUT,
 	ERROR
 }	t_program_state;
 
@@ -56,7 +56,7 @@ typedef struct s_parsed
 typedef struct s_coder_info
 {
 	int	number_of_coders;
-	int	cooldowns[3];  // 0 compile, 1 debug, 2 refactor
+	int	cooldowns[3]; // 0 compile, 1 debug, 2 refactor
 	int	time_to_burnout;
 	int	compiles;
 }	t_coder_info;
@@ -70,6 +70,8 @@ typedef struct s_program_info
 	t_schedule_mode	scheduler;
 }	t_program_info;
 
+typedef struct s_dongle	t_dongle;
+
 typedef struct s_coder
 {
 	t_coder_state	state;
@@ -82,7 +84,7 @@ typedef struct s_coder
 	int				current_cooldown;
 }	t_coder;
 
-typedef struct s_dongle
+struct s_dongle
 {
 	t_dongle_state	state;
 	int				index;
@@ -93,14 +95,14 @@ typedef struct s_dongle
 	pthread_mutex_t	mutex;
 
 	int				cooldown;
-}	t_dongle;
+};
 
 typedef struct s_containers
 {
 	t_coder			*coders;
 	t_dongle		*dongles;
-	pthread_t		*coders;
-	pthread_t		*dongles;
+	pthread_t		*t_coders;
+	pthread_t		*t_dongles;
 	pthread_t		*monitor;
 }	t_containers;
 

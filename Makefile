@@ -1,6 +1,6 @@
 
 SRC =		main.c	\
-			src/parsing.c
+			src/parsing.c src/codexion.c src/instantiations.c	\
 
 OBJ =		$(SRC:.c=.o)
 

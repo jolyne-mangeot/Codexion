@@ -15,10 +15,7 @@ int	main(int argc, char *argv[])
 	{
 		parsed = parsing(&argv[1]);
 		if (parsed.success == true)
-		{
-			output = 0;
-			write(1, "WOW\n", 4);
-		}
+			output = program_start(parsed);
 		else
 			output = 2;
 	}
