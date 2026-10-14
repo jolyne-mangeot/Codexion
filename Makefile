@@ -5,7 +5,7 @@ SRC =		main.c	\
 
 OBJ =		$(SRC:.c=.o)
 
-CFLAGS =	-Wall -Wextra -Werror -pthread
+CFLAGS =	-Wall -Wextra -Werror -pthread -g
 NAME =		codexion.out
 
 all: $(NAME)

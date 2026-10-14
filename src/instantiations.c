@@ -46,8 +46,8 @@ static int	instantiate_dongles(t_parsed parsed, t_containers *containers)
 			dongle->l_coder = &containers->coders[0];
 		else
 			dongle->l_coder = &containers->coders[index + 1];
-		dongle->queue[0] = NULL;
-		dongle->queue[1] = NULL;
+		dongle->queue[0] = 0;
+		dongle->queue[1] = 0;
 		gettimeofday(&dongle->cd_start, NULL);
 		index++;
 	}

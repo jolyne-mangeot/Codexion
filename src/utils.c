@@ -9,11 +9,11 @@ void	jumpstart_thread(pthread_mutex_t *start_mutex,
 	pthread_mutex_unlock(start_mutex);
 }
 
-void	update_timeval(struct timeval *time, pthread_mutex_t struct_mutex)
+void	update_timeval(struct timeval *time, pthread_mutex_t *struct_mutex)
 {
-	pthread_mutex_lock(&struct_mutex);
+	pthread_mutex_lock(struct_mutex);
 	gettimeofday(time, NULL);
-	pthread_mutex_unlock(&struct_mutex);
+	pthread_mutex_unlock(struct_mutex);
 }
 
 t_program_state	check_prog_state(t_program_info *prog_info)

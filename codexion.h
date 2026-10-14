@@ -131,12 +131,13 @@ void			*coder_thread(void *data);
 void			jumpstart_thread(pthread_mutex_t *start_mutex,
 					pthread_cond_t *start_cond);
 void			update_timeval(struct timeval *time,
-					pthread_mutex_t struct_mutex);
+					pthread_mutex_t *struct_mutex);
 t_program_state	check_prog_state(t_program_info *prog_info);
 void			set_prog_state(
 					t_program_info *prog_info, t_program_state state);
 int				milliseconds(struct timeval start);
 
+void			display_success(pthread_mutex_t *mutex);
 void			display_coder_state(t_coder *coder);
 void			display_dongle_state(t_coder *coder, t_dongle *dongle);
 

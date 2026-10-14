@@ -1,6 +1,12 @@
 
 #include "../codexion.h"
 
+static t_program_state	success(t_program_info *prog_info)
+{
+	display_success(&prog_info->print_mutex);
+	return (SUCCESS);
+}
+
 static t_program_state	burn_out(t_coder *coder)
 {
 	coder->state = BURNOUT;
@@ -32,7 +38,7 @@ static t_program_state	check_coders(t_monitor	*monitor)
 		index++;
 	}
 	if (done_count == monitor->prog_info->coders_info.number_of_coders)
-		return (SUCCESS);
+		return (success(monitor->prog_info));
 	return (RUNNING);
 }
 
@@ -67,5 +73,5 @@ void	*monitor_thread(void *data)
 		check_dongles(self);
 		set_prog_state(self->prog_info, check_coders(self));
 	}
-	return (data);
+	return (NULL);
 }
