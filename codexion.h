@@ -9,6 +9,7 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <time.h>
 
 typedef enum e_program_state
 {
@@ -64,6 +65,7 @@ typedef struct s_coder_info
 typedef struct s_program_info
 {
 	t_program_state	state;
+
 	pthread_cond_t	start_cond;
 	pthread_mutex_t	print_mutex;
 	struct timeval	program_start;
@@ -106,13 +108,22 @@ typedef struct s_containers
 	pthread_t		monitor;
 }	t_containers;
 
+typedef struct s_monitor
+{
+	t_program_info	*prog_info;
+	t_containers	*containers;
+}	t_monitor;
+
 t_parsed	parsing(char *argv[8]);
 
 int			program_start(t_parsed parsed);
-void		instantiate_program(t_parsed parsed,
-				t_program_info *prog_info, t_containers *containers);
+void		instantiate_program(t_parsed parsed, t_program_info *prog_info,
+				t_containers *containers, t_monitor *monitor);
 
-void	*monitor(void *data);
-void	*coder_thread(void *data);
+void		*monitor_thread(void *data);
+void		*coder_thread(void *data);
+
+void		jumpstart_thread(pthread_mutex_t *start_mutex,
+				pthread_cond_t *start_cond);
 
 #endif

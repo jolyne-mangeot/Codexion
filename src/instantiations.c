@@ -60,15 +60,14 @@ void	instantiate_coders_info(t_parsed parsed, t_coder_info *coders_info)
 	coders_info->compiles = parsed.number_of_compiles_required;
 }
 
-void	instantiate_program(t_parsed parsed,
-			t_program_info *prog_info, t_containers *containers)
+void	instantiate_program(t_parsed parsed, t_program_info *prog_info,
+			t_containers *containers, t_monitor *monitor)
 {
 	prog_info->state = ERROR;
 	if (pthread_mutex_init(&prog_info->print_mutex, NULL))
 		return ;
 	instantiate_coders_info(parsed, &prog_info->coders_info);
 	prog_info->scheduler = parsed.scheduler;
-
 	containers->coders = malloc(sizeof(t_coder) * parsed.number_of_coders);
 	if (!containers->coders)
 		return ;
@@ -78,10 +77,10 @@ void	instantiate_program(t_parsed parsed,
 	containers->t_coders = malloc(sizeof(pthread_t) * parsed.number_of_coders);
 	if (!containers->t_coders)
 		return ;
-
 	instantiate_coders(parsed, prog_info, containers);
 	if (instantiate_dongles(parsed, containers))
 		return ;
-
+	monitor->prog_info = prog_info;
+	monitor->containers = containers;
 	prog_info->state = RUNNING;
 }
