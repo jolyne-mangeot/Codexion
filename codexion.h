@@ -32,6 +32,7 @@ typedef enum e_coder_state
 	COMPILING,
 	DEBUGGING,
 	REFACTORING,
+	DONE,
 	BURNOUT
 }	t_coder_state;
 
@@ -65,11 +66,13 @@ typedef struct s_coder_info
 typedef struct s_program_info
 {
 	t_program_state	state;
+	pthread_mutex_t	state_mutex;
 
 	pthread_cond_t	start_cond;
 	pthread_mutex_t	print_mutex;
 	struct timeval	program_start;
 	t_coder_info	coders_info;
+	int				dongles_cooldown;
 	t_schedule_mode	scheduler;
 }	t_program_info;
 
@@ -78,26 +81,28 @@ typedef struct s_dongle	t_dongle;
 typedef struct s_coder
 {
 	t_coder_state	state;
+	pthread_mutex_t	mutex; // only for state and last_compile
 	t_program_info	*prog_info;
 	int				index;
 
-	t_dongle		*l_dongle;
 	t_dongle		*r_dongle;
+	t_dongle		*l_dongle;
 
-	int				current_cooldown;
+	struct timeval	last_compile;
+	struct timeval	cd_start;
 }	t_coder;
 
 struct s_dongle
 {
 	t_dongle_state	state;
+	pthread_mutex_t	mutex;
 	int				index;
 
-	t_coder			*l_coder;
 	t_coder			*r_coder;
-	t_coder			*queue[2];
-	pthread_mutex_t	mutex;
+	t_coder			*l_coder;
+	int				queue[2];
 
-	int				cooldown;
+	struct timeval	cd_start;
 };
 
 typedef struct s_containers
@@ -114,16 +119,25 @@ typedef struct s_monitor
 	t_containers	*containers;
 }	t_monitor;
 
-t_parsed	parsing(char *argv[8]);
+t_parsed		parsing(char *argv[8]);
 
-int			program_start(t_parsed parsed);
-void		instantiate_program(t_parsed parsed, t_program_info *prog_info,
-				t_containers *containers, t_monitor *monitor);
+int				program_start(t_parsed parsed);
+void			instantiate_program(t_parsed parsed, t_program_info *prog_info,
+					t_containers *containers, t_monitor *monitor);
 
-void		*monitor_thread(void *data);
-void		*coder_thread(void *data);
+void			*monitor_thread(void *data);
+void			*coder_thread(void *data);
 
-void		jumpstart_thread(pthread_mutex_t *start_mutex,
-				pthread_cond_t *start_cond);
+void			jumpstart_thread(pthread_mutex_t *start_mutex,
+					pthread_cond_t *start_cond);
+void			update_timeval(struct timeval *time,
+					pthread_mutex_t struct_mutex);
+t_program_state	check_prog_state(t_program_info *prog_info);
+void			set_prog_state(
+					t_program_info *prog_info, t_program_state state);
+int				milliseconds(struct timeval start);
+
+void			display_coder_state(t_coder *coder);
+void			display_dongle_state(t_coder *coder, t_dongle *dongle);
 
 #endif

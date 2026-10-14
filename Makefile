@@ -1,7 +1,7 @@
 
 SRC =		main.c	\
 			src/parsing.c src/codexion.c src/instantiations.c	\
-			src/monitor.c src/coders.c src/utils.c
+			src/monitor.c src/coders.c src/utils.c src/display.c
 
 OBJ =		$(SRC:.c=.o)
 
@@ -21,7 +21,7 @@ clean:
 	rm -f vgcore.*
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) vgcore.* 
 
 re: fclean all
 

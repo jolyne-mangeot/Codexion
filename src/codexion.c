@@ -1,7 +1,7 @@
 
 #include "../codexion.h"
 
-void	join_threads(t_program_info prog_info, t_containers containers)
+static void	join_threads(t_program_info prog_info, t_containers containers)
 {
 	int	index;
 
@@ -14,7 +14,7 @@ void	join_threads(t_program_info prog_info, t_containers containers)
 	pthread_join(containers.monitor, NULL);
 }
 
-void	free_mallocs(t_program_info prog_info, t_containers containers)
+static void	free_mallocs(t_program_info prog_info, t_containers containers)
 {
 	int	index;
 
@@ -32,7 +32,8 @@ void	free_mallocs(t_program_info prog_info, t_containers containers)
 		free(containers.t_coders);
 }
 
-int	program_end(int error, t_program_info prog_info, t_containers containers)
+static int	program_end(int error,
+				t_program_info prog_info, t_containers containers)
 {
 	pthread_cond_broadcast(&prog_info.start_cond);
 	join_threads(prog_info, containers);
@@ -40,7 +41,7 @@ int	program_end(int error, t_program_info prog_info, t_containers containers)
 	return (error);
 }
 
-int	start_threads(t_program_info *prog_info,
+static int	start_threads(t_program_info *prog_info,
 		t_containers *containers, t_monitor *monitor)
 {
 	int	index;
@@ -56,6 +57,7 @@ int	start_threads(t_program_info *prog_info,
 	if (pthread_create(&containers->monitor, NULL, monitor_thread, monitor))
 		return (5);
 	usleep(50000);
+	gettimeofday(&prog_info->program_start, NULL);
 	pthread_cond_broadcast(&prog_info->start_cond);
 	return (0);
 }
@@ -69,9 +71,9 @@ int	program_start(t_parsed parsed)
 	instantiate_program(parsed, &prog_info, &containers, &monitor);
 	if (prog_info.state == ERROR)
 		return (program_end(3, prog_info, containers));
-	gettimeofday(&prog_info.program_start, NULL);
 	pthread_cond_init(&prog_info.start_cond, NULL);
 	if (start_threads(&prog_info, &containers, &monitor))
 		return (program_end(4, prog_info, containers));
-	return (program_end(0, prog_info, containers));
+	program_end(0, prog_info, containers);
+	return (0);
 }

@@ -8,5 +8,6 @@ void	*coder_thread(void *data)
 	self = (t_coder *)data;
 	jumpstart_thread(&self->prog_info->print_mutex,
 		&self->prog_info->start_cond);
+	update_timeval(&self->last_compile, self->mutex);
 	return (NULL);
 }

@@ -1,7 +1,7 @@
 
 #include "../codexion.h"
 
-bool	is_digit(char *string)
+static bool	is_digit(char *string)
 {
 	bool	digit;
 
@@ -15,7 +15,7 @@ bool	is_digit(char *string)
 	return (digit);
 }
 
-void	create_parsed(t_parsed *parsed, char *argv[8])
+static void	create_parsed(t_parsed *parsed, char *argv[8])
 {
 	parsed->number_of_coders = atoi(argv[0]);
 	parsed->time_to_burnout = atoi(argv[1]);
