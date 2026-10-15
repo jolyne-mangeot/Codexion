@@ -1,12 +1,6 @@
 
 #include "../codexion.h"
 
-static t_program_state	success(t_program_info *prog_info)
-{
-	display_success(&prog_info->print_mutex);
-	return (SUCCESS);
-}
-
 static t_program_state	burn_out(t_coder *coder)
 {
 	coder->state = BURNOUT;
@@ -38,7 +32,7 @@ static t_program_state	check_coders(t_monitor	*monitor)
 		index++;
 	}
 	if (done_count == monitor->prog_info->coders_info.number_of_coders)
-		return (success(monitor->prog_info));
+		return (SUCCESS);
 	return (RUNNING);
 }
 

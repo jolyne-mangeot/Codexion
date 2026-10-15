@@ -72,17 +72,15 @@ void	instantiate_program(t_parsed parsed, t_program_info *prog_info,
 		return ;
 	if (pthread_mutex_init(&prog_info->print_mutex, NULL))
 		return ;
+	if (pthread_cond_init(&prog_info->start_cond, NULL))
+		return ;
 	instantiate_coders_info(parsed, &prog_info->coders_info);
 	prog_info->dongles_cooldown = parsed.dongle_cooldown;
 	prog_info->scheduler = parsed.scheduler;
 	containers->coders = malloc(sizeof(t_coder) * parsed.number_of_coders);
-	if (!containers->coders)
-		return ;
 	containers->dongles = malloc(sizeof(t_dongle) * parsed.number_of_coders);
-	if (!containers->dongles)
-		return ;
 	containers->t_coders = malloc(sizeof(pthread_t) * parsed.number_of_coders);
-	if (!containers->t_coders)
+	if (!containers->coders || !containers->dongles || !containers->t_coders)
 		return ;
 	if (instantiate_coders(parsed, prog_info, containers))
 		return ;

@@ -1,26 +1,28 @@
 
 #include "../codexion.h"
 
-static void	join_threads(t_program_info prog_info, t_containers containers)
+static void	join_threads(int number_of_coders,
+				pthread_t monitor, pthread_t *t_coders)
 {
 	int	index;
 
+	pthread_join(monitor, NULL);
 	index = 0;
-	if (containers.t_coders)
+	if (t_coders)
 	{
-		while (index < prog_info.coders_info.number_of_coders)
+		while (index < number_of_coders)
 		{
-			pthread_join(containers.t_coders[index], NULL);
+			pthread_join(t_coders[index], NULL);
 			index++;
 		}
 	}
-	pthread_join(containers.monitor, NULL);
 }
 
 static void	free_mallocs(t_program_info prog_info, t_containers containers)
 {
 	int	index;
 
+	pthread_mutex_destroy(&prog_info.state_mutex);
 	pthread_mutex_destroy(&prog_info.print_mutex);
 	if (containers.dongles)
 	{
@@ -38,10 +40,6 @@ static void	free_mallocs(t_program_info prog_info, t_containers containers)
 	}
 	if (containers.t_coders)
 		free(containers.t_coders);
-	pthread_mutex_destroy(&prog_info.state_mutex);
-	pthread_mutex_destroy(&prog_info.print_mutex);
-	pthread_cond_destroy(&prog_info.start_cond);
-	write(1, "6", 1);
 }
 
 static int	program_end(int error,
@@ -49,9 +47,6 @@ static int	program_end(int error,
 {
 	if (error)
 		set_prog_state(&prog_info, ERROR);
-	pthread_cond_broadcast(&prog_info.start_cond);
-	if (error)
-		join_threads(prog_info, containers);
 	free_mallocs(prog_info, containers);
 	return (error);
 }
@@ -82,22 +77,16 @@ int	program_start(t_parsed parsed)
 	t_program_info	prog_info;
 	t_containers	containers;
 	t_monitor		monitor;
-	int	index;
+	int				output;
 
 	instantiate_program(parsed, &prog_info, &containers, &monitor);
 	if (check_prog_state(&prog_info) == ERROR)
 		return (program_end(3, prog_info, containers));
-	pthread_cond_init(&prog_info.start_cond, NULL);
+	output = 0;
 	if (start_threads(&prog_info, &containers, &monitor))
-		return (program_end(4, prog_info, containers));
-	usleep(10000);
-	pthread_join(containers.monitor, NULL);
-	index = 0;
-	while (index < prog_info.coders_info.number_of_coders)
-	{
-		pthread_join(containers.t_coders[index], NULL);
-		index++;
-	}
+		output = 4;
+	join_threads(prog_info.coders_info.number_of_coders,
+		containers.monitor, containers.t_coders);
 	program_end(0, prog_info, containers);
-	return (0);
+	return (output);
 }

@@ -69,8 +69,8 @@ typedef struct s_program_info
 	pthread_mutex_t	state_mutex;
 
 	pthread_cond_t	start_cond;
-	pthread_mutex_t	print_mutex;
 	struct timeval	program_start;
+	pthread_mutex_t	print_mutex;
 	t_coder_info	coders_info;
 	int				dongles_cooldown;
 	t_schedule_mode	scheduler;
@@ -137,7 +137,6 @@ void			set_prog_state(
 					t_program_info *prog_info, t_program_state state);
 int				milliseconds(struct timeval start);
 
-void			display_success(pthread_mutex_t *mutex);
 void			display_coder_state(t_coder *coder);
 void			display_dongle_state(t_coder *coder, t_dongle *dongle);
 

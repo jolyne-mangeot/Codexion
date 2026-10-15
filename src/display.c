@@ -1,13 +1,6 @@
 
 #include "../codexion.h"
 
-void	display_success(pthread_mutex_t *mutex)
-{
-	pthread_mutex_lock(mutex);
-	printf("The simulation was a success\n");
-	pthread_mutex_unlock(mutex);
-}
-
 void	display_coder_state(t_coder *coder)
 {
 	char	*message;
