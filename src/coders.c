@@ -54,11 +54,11 @@ static void	start_coding(t_coder *coder)
 		set_coder_state(coder, WAITING);
 		if (compile(coder))
 			return ;
+		update_timeval(&coder->last_compile, &coder->mutex);
 		if (pass_state(coder))
 			return ;
 		compilations++;
 		put_down_dongles(coder);
-		update_timeval(&coder->last_compile, &coder->mutex);
 		set_coder_state(coder, DEBUGGING);
 		if (pass_state(coder))
 			return ;
@@ -78,6 +78,8 @@ void	*coder_thread(void *data)
 		&coder->prog_info->start_cond);
 	update_timeval(&coder->last_compile, &coder->mutex);
 	set_coder_state(coder, WAITING);
+	if (coder->l_dongle == coder->r_dongle)
+		return (NULL);
 	start_coding(coder);
 	return (NULL);
 }

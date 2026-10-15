@@ -79,6 +79,8 @@ int	program_start(t_parsed parsed)
 	t_monitor		monitor;
 	int				output;
 
+	if (parsed.number_of_coders == 0)
+		printf("No coder were present that day\n");
 	instantiate_program(parsed, &prog_info, &containers, &monitor);
 	if (check_prog_state(&prog_info) == ERROR)
 		return (program_end(3, prog_info, containers));

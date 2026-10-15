@@ -10,9 +10,9 @@ void	display_coder_state(t_coder *coder)
 	if (coder->state == COMPILING)
 		message = "is compiling";
 	else if (coder->state == DEBUGGING)
-		message = "is debugging";
+		message = "\t\tis debugging";
 	else if (coder->state == REFACTORING)
-		message = "is refactoring";
+		message = "\t\t\tis refactoring";
 	else if (coder->state == DONE)
 		message = "is done with their compilations";
 	else if (coder->state == BURNOUT)
@@ -26,7 +26,7 @@ void	display_coder_state(t_coder *coder)
 void	display_dongle_state(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&coder->prog_info->print_mutex);
-	printf("\t%ims\tCoder %i has taken dongle %i\n",
+	printf("\t%ims\tCoder %i\t\thas taken dongle %i\n",
 		milliseconds(coder->prog_info->program_start),
 		coder->index, dongle->index);
 	pthread_mutex_unlock(&coder->prog_info->print_mutex);

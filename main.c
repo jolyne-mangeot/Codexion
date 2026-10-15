@@ -4,7 +4,7 @@
 static void	print_end_message(int output)
 {
 	if (output == 0)
-		printf("The simulation was a success\n");
+		printf("\nThe simulation ended without error.\n");
 	else if (output == 1)
 		printf("This program requires exactly 8 arguments.\n");
 	else if (output == 2)

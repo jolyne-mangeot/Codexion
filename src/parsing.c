@@ -36,8 +36,9 @@ t_parsed	parsing(char *argv[8])
 	while (index < 7)
 	{
 		parsed.success = is_digit(argv[index]);
-		if (parsed.success == false)
+		if (parsed.success == false || strlen(argv[index]) > 8)
 		{
+			parsed.success = false;
 			printf("Argument %i with value %s could not be parsed.\n",
 				index, argv[index]);
 			return (parsed);
@@ -45,8 +46,11 @@ t_parsed	parsing(char *argv[8])
 		index++;
 	}
 	parsed.success = false;
-	if (strcmp("FIFO", argv[7]) && strcmp("EDF", argv[7]))
+	if (strcmp("fifo", argv[7]) && strcmp("edf", argv[7]))
+	{
+		printf("Scheduler argument should be 'edf' or 'fifo'\n");
 		return (parsed);
+	}
 	parsed.success = true;
 	create_parsed(&parsed, argv);
 	return (parsed);
