@@ -5,6 +5,8 @@ void	display_coder_state(t_coder *coder)
 {
 	char	*message;
 
+	if (coder->state == WAITING)
+		return ;
 	if (coder->state == COMPILING)
 		message = "is compiling";
 	else if (coder->state == DEBUGGING)
@@ -28,5 +30,4 @@ void	display_dongle_state(t_coder *coder, t_dongle *dongle)
 		milliseconds(coder->prog_info->program_start),
 		coder->index, dongle->index);
 	pthread_mutex_unlock(&coder->prog_info->print_mutex);
-
 }

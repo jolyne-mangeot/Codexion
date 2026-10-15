@@ -13,7 +13,7 @@ static void	print_end_message(int output)
 		printf("The instantiation of structures and memory allocations %s",
 			"was unsuccessful.\n");
 	else if (output == 4)
-			printf("There was an error during the lauching of threads.\n");
+		printf("There was an error during the lauching of threads.\n");
 }
 
 int	main(int argc, char *argv[])

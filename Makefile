@@ -1,7 +1,8 @@
 
 SRC =		main.c	\
-			src/parsing.c src/codexion.c src/instantiations.c	\
-			src/monitor.c src/coders.c src/utils.c src/display.c
+			src/parsing.c src/codexion.c src/instantiations.c		\
+			src/monitor.c src/coders.c src/utils.c src/display.c	\
+			src/dongles.c
 
 OBJ =		$(SRC:.c=.o)
 

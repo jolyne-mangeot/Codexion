@@ -33,7 +33,8 @@ typedef enum e_coder_state
 	DEBUGGING,
 	REFACTORING,
 	DONE,
-	BURNOUT
+	BURNOUT,
+	STARTING
 }	t_coder_state;
 
 typedef enum e_schedule_mode
@@ -89,7 +90,6 @@ typedef struct s_coder
 	t_dongle		*l_dongle;
 
 	struct timeval	last_compile;
-	struct timeval	cd_start;
 }	t_coder;
 
 struct s_dongle
@@ -98,9 +98,7 @@ struct s_dongle
 	pthread_mutex_t	mutex;
 	int				index;
 
-	t_coder			*r_coder;
-	t_coder			*l_coder;
-	int				queue[2];
+	t_coder			*queue[2];
 
 	struct timeval	cd_start;
 };
@@ -136,6 +134,10 @@ t_program_state	check_prog_state(t_program_info *prog_info);
 void			set_prog_state(
 					t_program_info *prog_info, t_program_state state);
 int				milliseconds(struct timeval start);
+
+void			register_in_queues(t_coder *coder);
+bool			check_dongles_priority(t_coder *coder);
+void			put_down_dongles(t_coder *coder);
 
 void			display_coder_state(t_coder *coder);
 void			display_dongle_state(t_coder *coder, t_dongle *dongle);

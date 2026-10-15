@@ -11,7 +11,7 @@ static int	instantiate_coders(t_parsed parsed,
 	while (index < parsed.number_of_coders)
 	{
 		coder = &containers->coders[index];
-		coder->state = WAITING;
+		coder->state = STARTING;
 		if (pthread_mutex_init(&coder->mutex, NULL))
 			return (1);
 		coder->prog_info = prog_info;
@@ -22,7 +22,6 @@ static int	instantiate_coders(t_parsed parsed,
 			coder->r_dongle = &containers->dongles[index - 1];
 		coder->l_dongle = &containers->dongles[index];
 		gettimeofday(&coder->last_compile, NULL);
-		gettimeofday(&coder->cd_start, NULL);
 		index++;
 	}
 	return (0);
@@ -41,13 +40,8 @@ static int	instantiate_dongles(t_parsed parsed, t_containers *containers)
 		if (pthread_mutex_init(&dongle->mutex, NULL))
 			return (1);
 		dongle->index = index + 1;
-		dongle->r_coder = &containers->coders[index];
-		if (index == parsed.number_of_coders - 1)
-			dongle->l_coder = &containers->coders[0];
-		else
-			dongle->l_coder = &containers->coders[index + 1];
-		dongle->queue[0] = 0;
-		dongle->queue[1] = 0;
+		dongle->queue[0] = NULL;
+		dongle->queue[1] = NULL;
 		gettimeofday(&dongle->cd_start, NULL);
 		index++;
 	}

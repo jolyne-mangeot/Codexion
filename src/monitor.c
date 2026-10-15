@@ -25,7 +25,7 @@ static t_program_state	check_coders(t_monitor	*monitor)
 		pthread_mutex_lock(&coder->mutex);
 		if (coder->state == DONE)
 			done_count++;
-		else if (coder->state != COMPILING
+		else if (coder->state != COMPILING && coder->state != STARTING
 			&& milliseconds(coder->last_compile) >= burnout_cd)
 			return (burn_out(coder));
 		pthread_mutex_unlock(&coder->mutex);
