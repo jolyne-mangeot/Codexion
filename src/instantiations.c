@@ -17,10 +17,15 @@ static int	instantiate_coders(t_parsed parsed,
 		coder->prog_info = prog_info;
 		coder->index = index + 1;
 		if (index == 0)
-			coder->r_dongle = &containers->dongles[parsed.number_of_coders - 1];
+		{
+			coder->r_dongle = &containers->dongles[index];
+			coder->l_dongle = &containers->dongles[parsed.number_of_coders - 1];
+		}
 		else
+		{
 			coder->r_dongle = &containers->dongles[index - 1];
-		coder->l_dongle = &containers->dongles[index];
+			coder->l_dongle = &containers->dongles[index];
+		}
 		gettimeofday(&coder->last_compile, NULL);
 		index++;
 	}

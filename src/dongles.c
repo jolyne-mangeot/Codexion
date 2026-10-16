@@ -1,6 +1,16 @@
 
 #include "../codexion.h"
 
+static int	check_coder_burnout(t_coder *coder)
+{
+	int	output;
+
+	pthread_mutex_lock(&coder->mutex);
+	output = milliseconds(coder->last_compile);
+	pthread_mutex_unlock(&coder->mutex);
+	return (output);
+}
+
 static int	update_dongles_queues(t_schedule_mode mode, t_dongle *dongle)
 {
 	t_coder	*temp;
@@ -12,17 +22,13 @@ static int	update_dongles_queues(t_schedule_mode mode, t_dongle *dongle)
 	}
 	else if (dongle->queue[1] != NULL && mode == EDF)
 	{
-		pthread_mutex_lock(&dongle->queue[0]->mutex);
-		pthread_mutex_lock(&dongle->queue[1]->mutex);
-		if (milliseconds(dongle->queue[0]->last_compile)
-			< milliseconds(dongle->queue[1]->last_compile))
+		if (check_coder_burnout(dongle->queue[0])
+			< check_coder_burnout(dongle->queue[1]))
 		{
 			temp = dongle->queue[0];
 			dongle->queue[0] = dongle->queue[1];
 			dongle->queue[1] = temp;
 		}
-		pthread_mutex_unlock(&dongle->queue[1]->mutex);
-		pthread_mutex_unlock(&dongle->queue[0]->mutex);
 	}
 	if (dongle->state != FREE)
 		return (0);
@@ -32,13 +38,13 @@ static int	update_dongles_queues(t_schedule_mode mode, t_dongle *dongle)
 void	put_down_dongles(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->r_dongle->mutex);
-	pthread_mutex_lock(&coder->l_dongle->mutex);
 	coder->r_dongle->state = COOLDOWN;
-	coder->l_dongle->state = COOLDOWN;
 	gettimeofday(&coder->r_dongle->cd_start, NULL);
+	pthread_mutex_unlock(&coder->r_dongle->mutex);
+	pthread_mutex_lock(&coder->l_dongle->mutex);
+	coder->l_dongle->state = COOLDOWN;
 	gettimeofday(&coder->l_dongle->cd_start, NULL);
 	pthread_mutex_unlock(&coder->l_dongle->mutex);
-	pthread_mutex_unlock(&coder->r_dongle->mutex);
 }
 
 bool	check_dongles_priority(t_coder *coder)
@@ -68,18 +74,18 @@ bool	check_dongles_priority(t_coder *coder)
 	return (dongles_free);
 }
 
-static void	register_in_queue(t_coder *coder, t_dongle *dongle)
-{
-	pthread_mutex_lock(&dongle->mutex);
-	if (dongle->queue[0] == NULL || dongle->queue[0] == coder)
-		dongle->queue[0] = coder;
-	else
-		dongle->queue[1] = coder;
-	pthread_mutex_unlock(&dongle->mutex);
-}
-
 void	register_in_queues(t_coder *coder)
 {
-	register_in_queue(coder, coder->l_dongle);
-	register_in_queue(coder, coder->r_dongle);
+	pthread_mutex_lock(&coder->r_dongle->mutex);
+	if (coder->r_dongle->queue[0] == NULL || coder->r_dongle->queue[0] == coder)
+		coder->r_dongle->queue[0] = coder;
+	else
+		coder->r_dongle->queue[1] = coder;
+	pthread_mutex_unlock(&coder->r_dongle->mutex);
+	pthread_mutex_lock(&coder->l_dongle->mutex);
+	if (coder->l_dongle->queue[0] == NULL || coder->l_dongle->queue[0] == coder)
+		coder->l_dongle->queue[0] = coder;
+	else
+		coder->l_dongle->queue[1] = coder;
+	pthread_mutex_unlock(&coder->l_dongle->mutex);
 }

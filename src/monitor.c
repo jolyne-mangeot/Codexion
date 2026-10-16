@@ -25,7 +25,7 @@ static t_program_state	check_coders(t_monitor	*monitor)
 		pthread_mutex_lock(&coder->mutex);
 		if (coder->state == DONE)
 			done_count++;
-		else if (coder->state != COMPILING && coder->state != STARTING
+		else if (coder->state != STARTING
 			&& milliseconds(coder->last_compile) >= burnout_cd)
 			return (burn_out(coder));
 		pthread_mutex_unlock(&coder->mutex);
@@ -45,7 +45,8 @@ static void	check_dongles(t_monitor	*monitor)
 	while (index < monitor->prog_info->coders_info.number_of_coders)
 	{
 		dongle = &monitor->containers->dongles[index];
-		pthread_mutex_lock(&dongle->mutex);
+		if (pthread_mutex_trylock(&dongle->mutex))
+			continue ;
 		if (dongle->state == COOLDOWN && milliseconds(dongle->cd_start)
 			>= monitor->prog_info->dongles_cooldown)
 			dongle->state = FREE;
@@ -56,16 +57,18 @@ static void	check_dongles(t_monitor	*monitor)
 
 void	*monitor_thread(void *data)
 {
-	t_monitor	*self;
+	t_monitor		*self;
+	t_program_state	coders_output;
 
 	self = (t_monitor *)data;
 	jumpstart_thread(&self->prog_info->print_mutex,
 		&self->prog_info->start_cond);
-	usleep(100);
 	while (check_prog_state(self->prog_info) == RUNNING)
 	{
 		check_dongles(self);
-		set_prog_state(self->prog_info, check_coders(self));
+		coders_output = check_coders(self);
+		if (coders_output != RUNNING)
+			set_prog_state(self->prog_info, coders_output);
 	}
 	return (NULL);
 }

@@ -13,9 +13,7 @@ static int	pass_state(t_coder *coder)
 {
 	int	remaining_cd;
 
-	pthread_mutex_lock(&coder->mutex);
 	remaining_cd = coder->prog_info->coders_info.cooldowns[coder->state - 1];
-	pthread_mutex_unlock(&coder->mutex);
 	while (remaining_cd > 0)
 	{
 		if (remaining_cd > 100)
@@ -34,7 +32,7 @@ static int	compile(t_coder *coder)
 	register_in_queues(coder);
 	while (!check_dongles_priority(coder))
 	{
-		usleep(1);
+		usleep(100);
 		if (check_prog_state(coder->prog_info) != RUNNING)
 			return (1);
 	}
@@ -78,6 +76,8 @@ void	*coder_thread(void *data)
 		&coder->prog_info->start_cond);
 	update_timeval(&coder->last_compile, &coder->mutex);
 	set_coder_state(coder, WAITING);
+	if (coder->index % 2 == 0)
+		usleep(100);
 	if (coder->l_dongle == coder->r_dongle)
 		return (NULL);
 	start_coding(coder);

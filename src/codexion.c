@@ -45,8 +45,6 @@ static void	free_mallocs(t_program_info prog_info, t_containers containers)
 static int	program_end(int error,
 				t_program_info prog_info, t_containers containers)
 {
-	if (error)
-		set_prog_state(&prog_info, ERROR);
 	free_mallocs(prog_info, containers);
 	return (error);
 }
