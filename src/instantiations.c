@@ -26,7 +26,6 @@ static int	instantiate_coders(t_parsed parsed,
 			coder->r_dongle = &containers->dongles[index - 1];
 			coder->l_dongle = &containers->dongles[index];
 		}
-		gettimeofday(&coder->last_compile, NULL);
 		index++;
 	}
 	return (0);

@@ -64,7 +64,7 @@ static int	start_threads(t_program_info *prog_info,
 	}
 	if (pthread_create(&containers->monitor, NULL, monitor_thread, monitor))
 		return (5);
-	usleep(1000000);
+	usleep(500000);
 	gettimeofday(&prog_info->program_start, NULL);
 	pthread_cond_broadcast(&prog_info->start_cond);
 	return (0);

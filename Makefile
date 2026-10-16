@@ -10,9 +10,7 @@ CFLAGS =	-Wall -Wextra -Werror -pthread -g
 NAME =		codexion.out
 
 all: $(NAME)
-
-no-flag:
-	cc $(SRC) -o $(NAME)
+	./codexion.out 5 800 100 100 100 4 50 edf
 
 $(NAME): $(OBJ)
 	cc $(CFLAGS) $(OBJ) -o $(NAME)
@@ -26,4 +24,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all no-flag clean fclean re
+.PHONY: all clean fclean re
